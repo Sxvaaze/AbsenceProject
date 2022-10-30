@@ -5,14 +5,28 @@ const query = util.promisify(con.query).bind(con);
 
 require('dotenv').config();
 
-con.connect(async function (err) {
-    if (err) throw err;
-    const check_tables = await query(`SELECT * FROM information_schema.tables WHERE table_schema = '${process.env.DB}'  AND table_name = 'students' LIMIT 1;`)
-    if (check_tables.length === 0) {
-        await query("CREATE TABLE students (student_id INT NOT NULL AUTO_INCREMENT, absences INT NOT NULL, fullname VARCHAR(256) NOT NULL, grade VARCHAR(128), student_lectures VARCHAR(16384), PRIMARY KEY ( student_id ));");
-        await query("CREATE TABLE lectures (lecture_id INT NOT NULL AUTO_INCREMENT, lecture_title VARCHAR(512) NOT NULL, lecture_teacher VARCHAR(256), lecture_students VARCHAR(16384), lecture_date DATE, PRIMARY KEY ( lecture_id ));");
-    }
-});
+
+function handleDisconnect() {
+    con.connect(async function (err) {
+        if (err) throw err;
+        const check_tables = await query(`SELECT * FROM information_schema.tables WHERE table_schema = '${process.env.DB}'  AND table_name = 'students' LIMIT 1;`)
+        if (check_tables.length === 0) {
+            await query("CREATE TABLE students (student_id INT NOT NULL AUTO_INCREMENT, absences INT NOT NULL, fullname VARCHAR(256) NOT NULL, grade VARCHAR(128), student_lectures VARCHAR(16384), PRIMARY KEY ( student_id ));");
+            await query("CREATE TABLE lectures (lecture_id INT NOT NULL AUTO_INCREMENT, lecture_title VARCHAR(512) NOT NULL, lecture_teacher VARCHAR(256), lecture_students VARCHAR(16384), lecture_date DATE, PRIMARY KEY ( lecture_id ));");
+        }
+    });                                
+
+    con.on('error', function(err) {
+        console.log('db error', err);
+        if(err.code === 'PROTOCOL_CONNECTION_LOST') { 
+            handleDisconnect();                         
+        } else {                                      
+            throw err;                                  
+        }
+    });
+  }
+  
+  handleDisconnect();
 
 const demo_stud = {
     absences: 0,

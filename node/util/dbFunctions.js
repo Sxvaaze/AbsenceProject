@@ -52,11 +52,12 @@ const checkLecture = async(lecture, id) => {
     Object.keys(res).forEach(function(key) {
         stud_res = res[key];
     })
+
     stud_res.student_lectures = stud_res.student_lectures.replaceAll("(", "");
     stud_res.student_lectures = stud_res.student_lectures.replaceAll(")", "");
     stud_res.student_lectures = stud_res.student_lectures.split(",")
-    
-    sql = `SELECT * from students WHERE '${lecture.lecture_title}' IN (${stud_res.student_lectures.map((val) => `'${val}'`)}) AND 'students.student_id' NOT IN (${lecture.lecture_students.map((val) =>
+
+    sql = `SELECT * from students WHERE '${lecture.lecture_title}' IN (${stud_res.student_lectures.map((item, index) => `'${item}'`)}) AND 'students.student_id' NOT IN (${lecture.lecture_students.map((val, index) =>
         `'${val}'`
     )})`
 
@@ -70,10 +71,20 @@ const findStudentById = async(id) => {
     if (res.length !== 0) { return res; }
 }
 
+const findLectureById = async(id) => {
+    const sql = `SELECT DISTINCT * from lectures WHERE lecture_id = ${id}`;
+    const res = await query(sql);
+    if (res.length !== 0) { return res; }
+}
+
 const truncateStudents = async() => {
     const sql = `TRUNCATE table students;`;
     await query(sql);
 }
 
+const truncateLectures = async() => {
+    const sql = `TRUNCATE table lectures;`;
+    await query(sql);
+}
 
-module.exports = { createNewStudent, updateAbsences, createLecture, checkLecture, findStudentById, truncateStudents };
+module.exports = { createNewStudent, updateAbsences, createLecture, checkLecture, findStudentById, findLectureById, truncateStudents, truncateLectures };

@@ -44,6 +44,7 @@ router.get(`/createStudent`, (req, res) => {
         res.status(200).json(newStudentSchema);
     } catch(err) {
         console.log(`An error occured whilst trying to GET /createStudent. Error: ${err}`)
+        res.status(500).json("An error occured while trying to create student, please check devlogs. ");
     }
 })
 
@@ -57,6 +58,7 @@ router.get(`/updateAbsences`, (req, res) => {
         dbfunc.updateAbsences(req.query['student_id'], parseInt(req.query['quantity']));
     } catch(err) {
         console.log(`An error occured whilst trying to GET /updateAbsences. Error: ${err}`)
+        res.status(500).json("An error occured while trying to update absences, please check devlogs. ");
     }
     res.status(200).json(req.query);
 });
@@ -74,6 +76,7 @@ router.get(`/findStudent`, async (req, res) => {
         res.status(200).json(student);
     } catch(err) {
         console.log(`An error occured whilst trying to GET /findStudent. Error: ${err}`)
+        res.status(500).json("An error occured while trying to find student, please check devlogs. ");
     }
 });
 
