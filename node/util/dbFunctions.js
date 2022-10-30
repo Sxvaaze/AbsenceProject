@@ -2,7 +2,8 @@ const query = require('../index.js');
 const con = require('../db.js');
 
 const createNewStudent = (student) => {
-    const sql = `INSERT INTO students (absences, fullname, grade, student_lectures) VALUES ('${student.absences}', '${student.fullname}', '${student.grade}', '(${student.student_lec})')`;
+    const sql = `INSERT INTO students (absences, fullname, grade, student_lectures) VALUES ('${student.absences}', '${student.fullname}', '${student.grade}', '(${student.student_lectures})')`;
+
     con.query(sql, function (err, result) {
         if (err) throw err;
         console.log("Student Successfully Created");
@@ -63,9 +64,16 @@ const checkLecture = async(lecture, id) => {
     if (req.length > 0) updateAbsences(req[0].student_id, 1);
 }
 
-const findStudent = async(id) => {
-    let sql = `SELECT DISTINCT * from students WHERE `
+const findStudentById = async(id) => {
+    const sql = `SELECT DISTINCT * from students WHERE student_id = ${id}`;
+    const res = await query(sql);
+    if (res.length !== 0) { return res; }
+}
+
+const truncateStudents = async() => {
+    const sql = `TRUNCATE table students;`;
+    await query(sql);
 }
 
 
-module.exports = { createNewStudent, updateAbsences, createLecture, checkLecture };
+module.exports = { createNewStudent, updateAbsences, createLecture, checkLecture, findStudentById, truncateStudents };
