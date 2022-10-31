@@ -6,38 +6,45 @@ const router = express.Router()
 router.get(`/createStudent`, (req, res) => {
     const param_count = Object.keys(req.query).length;
     try {
-        if (param_count !== 4) throw new Error('Expected 4 query parameters.');
+        if (param_count !== 5) throw new Error('Expected 5 query parameters.');
         const keys = Object.keys(req.query);
 
         let found = false;
-        for (let i = 0; i < 4 && !found; i++) {
+        for (let i = 0; i < 5 && !found; i++) {
             if (keys[i] === 'absences') found = true;
         }
         if (!found) throw new Error('Expected (absences) as query parameter.');
 
         found = false;
-        for (let i = 0; i < 4 && !found; i++) {
+        for (let i = 0; i < 5 && !found; i++) {
             if (keys[i] === 'fullname') found = true;
         }
         if (!found) throw new Error('Expected (fullname) as query parameter.');
 
         found = false;
-        for (let i = 0; i < 4 && !found; i++) {
+        for (let i = 0; i < 5 && !found; i++) {
             if (keys[i] === 'grade') found = true;
         }
         if (!found) throw new Error('Expected (grade) as query parameter.');
 
         found = false;
-        for (let i = 0; i < 4 && !found; i++) {
+        for (let i = 0; i < 5 && !found; i++) {
             if (keys[i] === 'student_lectures') found = true;
         }
         if (!found) throw new Error('Expected (student_lectures) as query parameter.');
+
+        found = false;
+        for (let i = 0; i < 5 && !found; i++) {
+            if (keys[i] === 'student_hex') found = true;
+        }
+        if (!found) throw new Error('Expected (student_hex) as query parameter.');
 
         const newStudentSchema = {
             absences: parseInt(req.query['absences']),
             fullname: req.query['fullname'],
             grade: req.query['grade'],
-            student_lectures: req.query['student_lectures'].replace(/["']/g, '').split(",")
+            student_lectures: req.query['student_lectures'].replace(/["']/g, '').split(","),
+            student_hex: req.query['student_hex']
         }
 
         dbfunc.createNewStudent(newStudentSchema);

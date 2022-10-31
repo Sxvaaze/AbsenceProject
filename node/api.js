@@ -6,6 +6,7 @@ app.use(cors());
 
 const students_route = require('./api-routes/students.js');
 const lectures_route = require('./api-routes/lectures.js');
+const teachers_route = require('./api-routes/teachers.js');
 
 const port = 4096;
 
@@ -15,5 +16,6 @@ app.listen(port, () => {
 
 app.use('/api/students', students_route);
 app.use('/api/lectures', lectures_route);
+app.use('/api/teachers', teachers_route);
 
 module.exports = app;

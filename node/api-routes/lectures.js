@@ -82,4 +82,16 @@ router.get(`/truncateLectures`, async(req, res) => {
     }
 })
 
+router.get(`/test`, async (req, res) => {
+    const quer = await dbfunc.initLectureByHex();
+    if (quer[1]) {
+        res.status(200).json(quer[0]);
+    }
+})
+
+router.get(`/test2`, async (req, res) => {
+    const quer = await dbfunc.updateLectureConcluded();
+    res.status(200).json(quer);
+})
+
 module.exports = router;
