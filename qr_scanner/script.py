@@ -1,38 +1,30 @@
 import cv2
 from pyzbar import pyzbar
-
-"""
-image = cv2.imread("chart.png")
-barcodes = pyzbar.decode(image)[0]
-print(barcodes.data)
-"""
-
-
-"""
+ 
 vid = cv2.VideoCapture(0)
 detector = cv2.QRCodeDetector()
-counter = 0
-image = cv2.imread("e.png")
-data, bbox, straight_qrcode = detector.detectAndDecode(image)
-print(data)
-
+ 
+ 
+def catch_qr_occurence(frame):
+    barcodes = pyzbar.decode(frame)[0]
+    print(barcodes)
+    print(barcodes.data)
+    data_keys = ['student_id', 'student_lectures','student_firstname','student_lastname','absences']
+    student_data = dict()
+    for index,val in enumerate(data_keys):
+        if val in barcodes.data:
+            student_data[val] = barcodes.data.split(" ")[index]
+    return student_data
+ 
 while True:
-    # Λήψη ροής εικόνα κατά εικόνα
     ret, frame = vid.read()
-    if not ret:
-        break
     data, bbox, straight_qrcode = detector.detectAndDecode(frame)
-
-    # Αν βρέθηκε qr στη ροή
+    stud_data = None
     if len(data) > 0:
-        cv2.imwrite(f"image_{counter}.jpg", frame)
-        counter += 1
-
-    # Εμφάνισε την εικόνα
-    cv2.imshow('frame', frame)
-
-    # Πατώντας το πλήκτρο 'q', μπορούμε
-    # να σπάσουμε τον ατέρμονα βρόγχο
+        stud_data = catch_qr_occurence(frame)
+    
+    if stud_data is not None:
+        print(f"Student found: ${stud_data}")
+        # to-do: send to db
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
-"""
