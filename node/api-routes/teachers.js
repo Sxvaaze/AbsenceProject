@@ -23,21 +23,4 @@ router.get(`/createTeacher`, async(req, res) => {
     }
 })
 
-router.get(`/test`, async(req, res) => {
-    try {
-        const param_count = Object.keys(req.query).length;
-        if (param_count !== 1) throw new Error("Expected 1 query parameter. ");
-        const keys = Object.keys(req.query);
-        if (keys[0] !== 'hex') throw new Error('Expected (hex) as query parameter.');
-
-        const r = await dbfunc.handleRFIDScan(req.query['hex']);
-        res.status(200).json(r);
-    } catch (err) {
-        console.log(`An error occured whilst trying to GET /test. Error: ${err}`);
-        res.status(500).json("An error occured while trying to test, please check devlogs. ");
-    }
-})
-
-
-
 module.exports = router;

@@ -48,11 +48,35 @@ router.get(`/createLecture`, async(req, res) => {
             lecture_date: date
         }
 
-        await dbfunc.createLecture(newLectureSchema);
+        await dbfunc.createLecture(newLectureSchema, "open");
         res.status(200).json(newLectureSchema);
     } catch(err) {
         console.log(`An error occured whilst trying to GET /createLecture. Error: ${err}`)
         res.status(500).json("An error occured while trying to create lecture, please check devlogs. ");
+    }
+})
+
+router.get(`/concludeLecture`, async(req, res) => {
+    try {
+        const r = await dbfunc.createLecture({}, "close");
+        res.status(200).json(r);
+    } catch(err) {
+        console.log(`An error occured whilst trying to GET /concludeLecture. Error: ${err}`)
+        res.status(500).json("An error occured while trying to conclude lecture, please check devlogs. ");
+    }
+})
+
+router.get(`/appendStudent`, async(req, res) => {
+    const param_count = Object.keys(req.query).length;
+    try {
+        if (param_count !== 1) throw new Error('Expected (student_id) as query parameter. ');
+        const keys = Object.keys(req.query);
+        if (keys[0] !== 'student_id') throw new Error('Expected (student_id) as query parameter. ');
+        const res = await dbfunc.appendStudentToActiveLecture(req.query['student_id']);
+        res.status(200).json(res);
+    } catch(err) {
+        console.log(`An error occured whilst trying to GET /appendStudent. Error: ${err}`)
+        res.status(500).json("An error occured while trying to append student, please check devlogs. ");
     }
 })
 
@@ -80,18 +104,6 @@ router.get(`/truncateLectures`, async(req, res) => {
         console.log(`An error occured whilst trying to GET /createLectures. Error: ${err}`)
         res.status(500).json("An error occured while trying to truncate lectures, please check devlogs. ");
     }
-})
-
-router.get(`/test`, async (req, res) => {
-    const quer = await dbfunc.initLectureByHex();
-    if (quer[1]) {
-        res.status(200).json(quer[0]);
-    }
-})
-
-router.get(`/test2`, async (req, res) => {
-    const quer = await dbfunc.updateLectureConcluded();
-    res.status(200).json(quer);
 })
 
 module.exports = router;
