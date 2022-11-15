@@ -48,7 +48,7 @@ router.get(`/createLecture`, async(req, res) => {
             lecture_date: date
         }
 
-        await dbfunc.createLecture(newLectureSchema, "open");
+        await dbfunc.createLecture(newLectureSchema, req.body.mode);
         res.status(200).json(newLectureSchema);
     } catch(err) {
         console.log(`An error occured whilst trying to GET /createLecture. Error: ${err}`)
